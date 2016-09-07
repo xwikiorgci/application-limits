@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.xwiki.commons</groupId>
+    <artifactId>xwiki-commons-pom</artifactId>
+    <version>7.4.3</version>
+  </parent>
+  <groupId>org.xwiki.contrib</groupId>
+  <artifactId>application-xwikilimits</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>XWiki Limits - Parent POM</name>
+  <packaging>pom</packaging>
+  <description>Enforce some limits on an XWiki instance: number of users, number of wikis, etc...</description>
+  <properties>
+    <platform.version>${commons.version}</platform.version>
+  </properties>
+  <modules>
+    <module>application-xwikilimits-api</module>
+    <module>application-xwikilimits-ui</module>
+  </modules>
+  <developers>
+    <developer>
+      <id>gdelhumeau</id>
+      <name>Guillaume Delhumeau</name>
+      <organization>XWiki SAS</organization>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/xwiki-contrib/application-xwikilimits.git</connection>
+    <developerConnection>scm:git:git@github.com:xwiki-contrib/application-xwikilimits.git</developerConnection>
+    <url>https://github.com/xwiki-contrib/application-xwikilimits/tree/master</url>
+    <tag>HEAD</tag>
+  </scm>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.xwiki.org/browse/LIMITS</url>
+  </issueManagement>
+  <distributionManagement>
+    <repository>
+      <id>xwiki-staging</id>
+      <name>XWiki Staging Repository</name>
+      <url>http://nexus.xwiki.org/nexus/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+</project>

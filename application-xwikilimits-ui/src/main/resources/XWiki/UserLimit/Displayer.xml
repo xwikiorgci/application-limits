@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc version="1.2" reference="XWiki.UserLimit.Displayer" locale="">
+  <web>XWiki.UserLimit</web>
+  <name>Displayer</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <creator>xwiki:XWiki.Admin</creator>
+  <creationDate>1465222670000</creationDate>
+  <parent>XWiki.UserLimit.WebHome</parent>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <date>1465225010000</date>
+  <contentUpdateDate>1465225010000</contentUpdateDate>
+  <version>1.1</version>
+  <title>Displayer</title>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <content>{{velocity}}
+## It would be better if this page were a proper UI extension or a Configurable Class.
+## Currently blocked by: http://jira.xwiki.org/browse/XWIKI-13494
+{{html clean="false"}}
+#set ($userCount = $services.limits.userCount)
+#set ($userLimit = $services.limits.userLimit)
+&lt;p&gt;$services.localization.render('userlimit.displayer', [$userCount, $userLimit])&lt;/p&gt;
+#set ($userCount = $mathtool.toDouble($userCount))
+#set ($userLimit = $mathtool.toDouble($userLimit))
+#set ($percent = $userCount / $userLimit * 100)
+#set ($progressBarClass = "progress-bar-success")
+#if ($percent &gt; 75)
+  #set ($progressBarClass = "progress-bar-warning")
+#end
+#if ($percent &gt;= 99)
+  #set ($progressBarClass = "progress-bar-danger")
+#end
+&lt;div class="progress"&gt;&lt;div class="progress-bar $progressBarClass" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: ${percent}%;"&gt;&lt;/div&gt;&lt;/div&gt;
+{{/html}}
+{{/velocity}}</content>
+</xwikidoc>
