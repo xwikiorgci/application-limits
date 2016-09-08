@@ -5,20 +5,20 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.xwiki.contrib</groupId>
-    <artifactId>application-xwikilimits</artifactId>
+    <artifactId>application-limits</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>application-xwikilimits-ui</artifactId>
-  <name>XWiki Limits - UI</name>
+  <artifactId>application-limits-ui</artifactId>
+  <name>Limits - UI</name>
   <packaging>xar</packaging>
   <properties>
     <!-- Name to display by the Extension Manager -->
-    <xwiki.extension.name>XWiki Limits Application</xwiki.extension.name>
+    <xwiki.extension.name>Limits Application</xwiki.extension.name>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>com.xwikisas</groupId>
-      <artifactId>xwikilimits-api</artifactId>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>application-limits-api</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>

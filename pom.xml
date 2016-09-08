@@ -7,17 +7,17 @@
     <version>7.4.3</version>
   </parent>
   <groupId>org.xwiki.contrib</groupId>
-  <artifactId>application-xwikilimits</artifactId>
+  <artifactId>application-limits</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>XWiki Limits - Parent POM</name>
+  <name>Limits - Parent POM</name>
   <packaging>pom</packaging>
   <description>Enforce some limits on an XWiki instance: number of users, number of wikis, etc...</description>
   <properties>
     <platform.version>${commons.version}</platform.version>
   </properties>
   <modules>
-    <module>application-xwikilimits-api</module>
-    <module>application-xwikilimits-ui</module>
+    <module>application-limits-api</module>
+    <module>application-limits-ui</module>
   </modules>
   <developers>
     <developer>

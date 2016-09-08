@@ -19,19 +19,19 @@
  */
 package org.xwiki.contrib.limits.internal.groups;
 
-import java.util.List;
+import java.util.HashSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
+import org.xwiki.context.Execution;
 import org.xwiki.model.reference.DocumentReference;
-import org.xwiki.model.reference.EntityReferenceSerializer;
-import org.xwiki.query.Query;
-import org.xwiki.query.QueryException;
-import org.xwiki.query.QueryManager;
-import org.xwiki.wiki.descriptor.WikiDescriptorManager;
+import org.xwiki.model.reference.DocumentReferenceResolver;
+
+import com.xpn.xwiki.internal.plugin.rightsmanager.ReferenceUserIterator;
 
 /**
  * @version $Id: $
@@ -41,28 +41,22 @@ import org.xwiki.wiki.descriptor.WikiDescriptorManager;
 public class GroupMemberCounter
 {
     @Inject
-    private WikiDescriptorManager wikiDescriptorManager;
+    @Named("explicit")
+    private DocumentReferenceResolver<String> explicitDocumentReferenceResolver;
 
     @Inject
-    private QueryManager queryManager;
-
-    @Inject
-    @Named("local")
-    private EntityReferenceSerializer<String> entityReferenceSerializer;
+    private Provider<Execution> executionProvider;
 
     public long getUserCount(DocumentReference groupReference) throws Exception
     {
-        try {
-            Query query = queryManager.createQuery("SELECT COUNT(DISTINCT obj.member) FROM Document doc, " +
-                    "doc.object(XWiki.XWikiGroups) AS obj WHERE doc.fullName = :groupDoc " +
-                    "AND obj.member <> ''", Query.XWQL)
-                        .setWiki(wikiDescriptorManager.getMainWikiId())
-                        .bindValue("groupDoc", entityReferenceSerializer.serialize(groupReference));
-            List<Long> results = query.execute();
-            return results.get(0);
-        } catch (QueryException e) {
-            throw new Exception(String.format("Failed to get the number of member in the group [%s].",
-                    groupReference.toString()), e);
+        HashSet<DocumentReference> members = new HashSet<>();
+
+        ReferenceUserIterator userIterator = new ReferenceUserIterator(groupReference,
+                explicitDocumentReferenceResolver, executionProvider.get());
+        while (userIterator.hasNext()) {
+            members.add(userIterator.next());
         }
+
+        return members.size();
     }
 }

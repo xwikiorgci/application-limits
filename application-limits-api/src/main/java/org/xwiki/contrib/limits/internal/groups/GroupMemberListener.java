@@ -31,16 +31,18 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.xwiki.bridge.event.DocumentUpdatingEvent;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.context.Execution;
 import org.xwiki.contrib.limits.XWikiLimitsConfiguration;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.DocumentReferenceResolver;
 import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.CancelableEvent;
 import org.xwiki.observation.event.Event;
+import org.xwiki.text.StringUtils;
 
-import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.internal.plugin.rightsmanager.ReferenceUserIterator;
+import com.xpn.xwiki.objects.BaseObject;
 
 /**
  * @version $Id: $
@@ -69,7 +71,7 @@ public class GroupMemberListener implements EventListener
     private Logger logger;
 
     @Inject
-    private Provider<XWikiContext> contextProvider;
+    private Provider<Execution> executionProvider;
 
     @Override
     public String getName()
@@ -127,13 +129,22 @@ public class GroupMemberListener implements EventListener
     {
         // Hashset is used to avoid counting twice the same member if multiple objects have the same value.
         HashSet<DocumentReference> members = new HashSet<>();
-
-        ReferenceUserIterator userIterator = new ReferenceUserIterator(document.getDocumentReference(),
-                explicitDocumentReferenceResolver, contextProvider.get());
-        while (userIterator.hasNext()) {
-            members.add(userIterator.next());
+        for (BaseObject obj : document.getXObjects(GROUP_CLASS)) {
+            if (obj == null) {
+                continue;
+            }
+            String member = obj.getStringValue("member");
+            if (StringUtils.isNotBlank(member)) {
+                // The member could be... an other group!
+                // It could happen if the user is trying to cheat us.
+                DocumentReference groupReference = explicitDocumentReferenceResolver.resolve(member);
+                ReferenceUserIterator referenceUserIterator = new ReferenceUserIterator(groupReference,
+                        explicitDocumentReferenceResolver, executionProvider.get());
+                while (referenceUserIterator.hasNext()) {
+                    members.add(referenceUserIterator.next());
+                }
+            }
         }
-
         return members.size();
     }
 }
