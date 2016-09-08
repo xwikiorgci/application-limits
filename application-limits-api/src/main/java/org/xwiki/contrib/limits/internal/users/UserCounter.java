@@ -48,10 +48,10 @@ public class UserCounter
     @Inject
     private Logger logger;
 
-    public long getUserCount() throws Exception
+    public int getUserCount() throws Exception
     {
         try {
-            long count = 0;
+            int count = 0;
             for (String wikiId : wikiDescriptorManager.getAllIds()) {
                 count += getUserCountOnWiki(wikiId);
             }
@@ -62,12 +62,12 @@ public class UserCounter
         }
     }
 
-    private long getUserCountOnWiki(String wikiId) throws QueryException
+    private int getUserCountOnWiki(String wikiId) throws QueryException
     {
         Query query = queryManager.createQuery("SELECT COUNT(DISTINCT doc.fullName) FROM Document doc," +
                 " doc.object(XWiki.XWikiUsers) AS obj",
                 Query.XWQL).setWiki(wikiId);
         List<Long> results = query.execute();
-        return results.get(0);
+        return results.get(0).intValue();
     }
 }

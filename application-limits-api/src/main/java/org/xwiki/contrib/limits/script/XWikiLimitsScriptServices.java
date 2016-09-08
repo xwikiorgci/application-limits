@@ -45,12 +45,17 @@ public class XWikiLimitsScriptServices implements ScriptService
     @Inject
     private UserCounter userCounter;
 
-    public long getUserLimit() throws Exception
+    public int getUserLimit() throws Exception
     {
         return limitsConfiguration.getTotalNumberOfUsersLimit();
     }
 
-    public long getUserCount() throws Exception
+    public int getWikiLimit() throws Exception
+    {
+        return limitsConfiguration.getWikisNumberLimit();
+    }
+
+    public int getUserCount() throws Exception
     {
         return userCounter.getUserCount();
     }

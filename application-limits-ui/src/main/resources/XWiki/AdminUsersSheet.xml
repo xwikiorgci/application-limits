@@ -39,7 +39,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.0</syntaxId>
   <hidden>true</hidden>
-  <content>{{include reference="XWiki.UserLimit.Displayer" /}}
+  <content>{{include reference="XWiki.Limits.UserLimitDisplayer" /}}
 
 {{velocity}}
 ## We include new settings from the Wiki Manager (only if it is not the main wiki)
@@ -135,7 +135,7 @@
           &lt;span class="buttonwrapper"&gt;&lt;a href="#" id="addNewUser" class="addNewUserOrGroup"&gt;$services.localization.render('rightsmanager.addnewuser')&lt;/a&gt;&lt;/span&gt;
       #else
         &lt;div class="box warningmessage"&gt;
-        $services.localization.render('userlimit.reachedLimit')
+        $services.localization.render('limits.user.reachedLimit')
         &lt;/div&gt;
       #end
       ######################################
