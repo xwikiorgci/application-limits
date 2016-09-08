@@ -1,4 +1,4 @@
-# XWiki Limits Application
+# Limits Application for XWiki
 
 Enforce some limits on an XWiki instance: number of users, number of wikis, etc...
 
