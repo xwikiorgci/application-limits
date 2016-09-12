@@ -25,7 +25,7 @@ import javax.inject.Named;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
-import org.xwiki.contrib.limits.XWikiLimitsConfiguration;
+import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.platform.wiki.creationjob.WikiCreationException;
 import org.xwiki.platform.wiki.creationjob.WikiCreationRequest;
 import org.xwiki.platform.wiki.creationjob.WikiCreationStep;
@@ -46,7 +46,7 @@ public class WikisLimitStep implements WikiCreationStep
     private WikiDescriptorManager wikiDescriptorManager;
 
     @Inject
-    private XWikiLimitsConfiguration configuration;
+    private LimitsConfiguration configuration;
 
     @Override
     public void execute(WikiCreationRequest request) throws WikiCreationException

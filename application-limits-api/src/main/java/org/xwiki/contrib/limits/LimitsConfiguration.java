@@ -32,7 +32,7 @@ import org.xwiki.stability.Unstable;
  */
 @Unstable
 @Role
-public interface XWikiLimitsConfiguration
+public interface LimitsConfiguration
 {
     /**
      * Reload the configuration.

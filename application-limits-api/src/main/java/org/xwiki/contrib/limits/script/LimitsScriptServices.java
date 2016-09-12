@@ -26,7 +26,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
-import org.xwiki.contrib.limits.XWikiLimitsConfiguration;
+import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.contrib.limits.internal.users.UserCounter;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.script.service.ScriptService;
@@ -37,10 +37,10 @@ import org.xwiki.script.service.ScriptService;
 @Component
 @Singleton
 @Named("limits")
-public class XWikiLimitsScriptServices implements ScriptService
+public class LimitsScriptServices implements ScriptService
 {
     @Inject
-    private XWikiLimitsConfiguration limitsConfiguration;
+    private LimitsConfiguration limitsConfiguration;
 
     @Inject
     private UserCounter userCounter;

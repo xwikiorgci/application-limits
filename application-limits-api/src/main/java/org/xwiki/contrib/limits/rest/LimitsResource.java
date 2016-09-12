@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.contrib.limits.XWikiLimitsConfiguration;
+import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.rest.XWikiRestComponent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +49,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class LimitsResource implements XWikiRestComponent
 {
     @Inject
-    private XWikiLimitsConfiguration configuration;
+    private LimitsConfiguration configuration;
 
     @Inject
     private Logger logger;

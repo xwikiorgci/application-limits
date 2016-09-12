@@ -39,16 +39,16 @@ import org.xwiki.component.phase.InitializationException;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.text.StringUtils;
 
-import org.xwiki.contrib.limits.XWikiLimitsConfiguration;
+import org.xwiki.contrib.limits.LimitsConfiguration;
 
 /**
- * Default implementation of {@link XWikiLimitsConfiguration}.
+ * Default implementation of {@link LimitsConfiguration}.
  *
  * @version $Id: $
  */
 @Component
 @Singleton
-public class DefaultXWikiLimitsConfiguration implements XWikiLimitsConfiguration, Initializable
+public class DefaultLimitsConfiguration implements LimitsConfiguration, Initializable
 {
     // Windows is not supported and we don't care.
     private Path configFile = Paths.get("/", "etc", "xwiki", "limits.xml");

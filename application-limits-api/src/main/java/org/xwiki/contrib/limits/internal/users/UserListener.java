@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.xwiki.bridge.event.DocumentCreatingEvent;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.model.reference.LocalDocumentReference;
 import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.CancelableEvent;
@@ -36,13 +37,12 @@ import org.xwiki.observation.event.Event;
 
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
-import org.xwiki.contrib.limits.XWikiLimitsConfiguration;
 
 /**
  * @version $Id: $
  */
 @Component
-@Named("XWikiLimitsApplication_UserLimit")
+@Named("LimitsApplication_UserLimit")
 @Singleton
 public class UserListener implements EventListener
 {
@@ -52,7 +52,7 @@ public class UserListener implements EventListener
     private UserCounter userCounter;
 
     @Inject
-    private XWikiLimitsConfiguration limitConfiguration;
+    private LimitsConfiguration limitConfiguration;
 
     @Inject
     private Logger logger;

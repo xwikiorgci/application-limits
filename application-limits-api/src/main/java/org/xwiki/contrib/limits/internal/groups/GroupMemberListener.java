@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.xwiki.bridge.event.DocumentUpdatingEvent;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.context.Execution;
-import org.xwiki.contrib.limits.XWikiLimitsConfiguration;
+import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.DocumentReferenceResolver;
 import org.xwiki.observation.EventListener;
@@ -48,7 +48,7 @@ import com.xpn.xwiki.objects.BaseObject;
  * @version $Id: $
  */
 @Component
-@Named("XWikiLimitsApplication_GroupMemberListener")
+@Named("LimitsApplication_GroupMemberListener")
 @Singleton
 public class GroupMemberListener implements EventListener
 {
@@ -61,7 +61,7 @@ public class GroupMemberListener implements EventListener
     private GroupMemberCounter groupMemberCounter;
 
     @Inject
-    private XWikiLimitsConfiguration limitsConfiguration;
+    private LimitsConfiguration limitsConfiguration;
 
     @Inject
     @Named("explicit")
