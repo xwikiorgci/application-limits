@@ -76,7 +76,7 @@ public class GroupMemberListener implements EventListener
     @Override
     public String getName()
     {
-        return "XWiki Limits Application - Groups Member Listener";
+        return "Limits Application - Groups Member Listener";
     }
 
     @Override

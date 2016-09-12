@@ -10,6 +10,10 @@
   </parent>
   <artifactId>application-limits-api</artifactId>
   <name>Limits - API</name>
+  <properties>
+    <!-- Test coverage -->
+    <xwiki.jacoco.instructionRatio>0.24</xwiki.jacoco.instructionRatio>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.xwiki.commons</groupId>
