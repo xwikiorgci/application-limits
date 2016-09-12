@@ -28,7 +28,7 @@ To get the translations done on the [l10n.xwiki.org](http://l10n.xwiki.org/xwiki
 git status
 
 ## Add changes (example)
-git add src/main/resources/TourCode/TourTranslations.fr.xml
+git add application-limits-ui/src/main/resources/XWiki/Limits/Translations.fr.xml
 
 ## Commit changes
 git commit
