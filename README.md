@@ -9,6 +9,7 @@ Enforce some limits on an XWiki instance: number of users, number of wikis, etc.
 * Minimal XWiki version supported: 7.4.3
 * License: LGPL 2.1
 * [Translations](http://l10n.xwiki.org/xwiki/bin/view/Contrib/LimitsApplication)
+* Continuous Integration Status: [![Build Status](http://ci.xwiki.org/buildStatus/icon?job=Contrib%20-%20Limits%20Application)](http://ci.xwiki.org/job/Contrib%20-%20Limits%20Application/)
 
 ## Developers
 
