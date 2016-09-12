@@ -45,7 +45,7 @@
 {{html clean="false"}}
 #set ($userCount = $services.limits.userCount)
 #set ($userLimit = $services.limits.userLimit)
-&lt;p&gt;$services.localization.render('limits.user.displayer', [$userCount, $userLimit])&lt;/p&gt;
+&lt;p&gt;$escapetool.xml($services.localization.render('limits.user.displayer', [$userCount, $userLimit]))&lt;/p&gt;
 #set ($userCount = $mathtool.toDouble($userCount))
 #set ($userLimit = $mathtool.toDouble($userLimit))
 #set ($percent = $userCount / $userLimit * 100)
