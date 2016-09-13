@@ -43,10 +43,10 @@
   <object>
     <name>XWiki.Limits.LimitsUIX</name>
     <number>0</number>
-    <className>XWiki.UIExtensionClass</className>
-    <guid>eb88294e-efc9-421f-be3f-2e60b85fe813</guid>
+    <className>XWiki.JavaScriptExtension</className>
+    <guid>da14bede-c8c1-48b9-90a3-55adea3c1bed</guid>
     <class>
-      <name>XWiki.UIExtensionClass</name>
+      <name>XWiki.JavaScriptExtension</name>
       <customClass/>
       <customMapping/>
       <defaultViewSheet/>
@@ -54,83 +54,218 @@
       <defaultWeb/>
       <nameField/>
       <validationScript/>
-      <content>
-        <disabled>0</disabled>
-        <editor>Text</editor>
-        <name>content</name>
-        <number>3</number>
-        <prettyName>Extension Content</prettyName>
-        <rows>10</rows>
-        <size>40</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
-      </content>
-      <extensionPointId>
-        <disabled>0</disabled>
-        <name>extensionPointId</name>
-        <number>1</number>
-        <prettyName>Extension Point ID</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </extensionPointId>
-      <name>
-        <disabled>0</disabled>
-        <name>name</name>
-        <number>2</number>
-        <prettyName>Extension ID</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </name>
-      <parameters>
-        <disabled>0</disabled>
-        <editor>PureText</editor>
-        <name>parameters</name>
-        <number>4</number>
-        <prettyName>Extension Parameters</prettyName>
-        <rows>10</rows>
-        <size>40</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
-      </parameters>
-      <scope>
+      <cache>
         <cache>0</cache>
         <disabled>0</disabled>
         <displayType>select</displayType>
         <multiSelect>0</multiSelect>
-        <name>scope</name>
+        <name>cache</name>
         <number>5</number>
-        <prettyName>Extension Scope</prettyName>
+        <prettyName>Caching policy</prettyName>
         <relationalStorage>0</relationalStorage>
         <separator> </separator>
         <separators>|, </separators>
         <size>1</size>
         <unmodifiable>0</unmodifiable>
-        <values>wiki=Current Wiki|user=Current User|global=Global</values>
+        <values>long|short|default|forbid</values>
         <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
-      </scope>
+      </cache>
+      <code>
+        <disabled>0</disabled>
+        <editor>PureText</editor>
+        <name>code</name>
+        <number>2</number>
+        <prettyName>Code</prettyName>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>4</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>3</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
     </class>
     <property>
-      <content>{{velocity display="false"}}
-## It's a bit hacky but it is the cleanest way I have found to disable the CreateWikiUIX in the whole XWiki without touching it.
-#if ($hasCreateWiki &amp;&amp; $services.limits.wikiLimit &lt;= $services.wiki.allIds.size())
-  #set ($hasCreateWiki = false)
-#end
-{{/velocity}}
-</content>
+      <cache>forbid</cache>
     </property>
     <property>
-      <extensionPointId>org.xwiki.plaftorm.drawer</extensionPointId>
+      <code>require(['jquery', 'xwiki-meta'], function ($, xm) {
+  'use strict';
+
+  $(document).ready(function() {  
+    // If this JS is loaded, it means that the user has reached the user limits.
+    // So we remove the 'Add user' button and we replace it by a message.
+    $('#tdAddNewUserOrGroup .buttonwrapper').remove();
+    $('#tdAddNewUserOrGroup').append($("&lt;div class=\"box warningmessage\"&gt;$escapetool.javascript($escapetool.xml($services.localization.render('limits.user.reachedLimit')))&lt;/div&gt;"));
+    
+    // Disable the create wiki form
+    if (xm.document == 'WikiManager.CreateWiki') {
+      $('#xwikicontent &gt; *').remove();
+      $('#xwikicontent').append($("&lt;div class=\"box errormessage\"&gt;$escapetool.javascript($escapetool.xml($services.localization.render('limits.wikis.createwiki', [$services.limits.wikiLimit])))&lt;/div&gt;"));
+    }
+  });
+
+});
+</code>
     </property>
     <property>
-      <name>org.xwiki.contrib:application-limits-ui</name>
+      <name>JS for the User Administration</name>
     </property>
     <property>
-      <parameters>order=0</parameters>
+      <parse>1</parse>
     </property>
     <property>
-      <scope>global</scope>
+      <use>currentPage</use>
+    </property>
+  </object>
+  <object>
+    <name>XWiki.Limits.LimitsUIX</name>
+    <number>0</number>
+    <className>XWiki.StyleSheetExtension</className>
+    <guid>7faba748-3e4c-4162-8d66-9749d44d70c7</guid>
+    <class>
+      <name>XWiki.StyleSheetExtension</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <cache>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>cache</name>
+        <number>6</number>
+        <prettyName>Caching policy</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>long|short|default|forbid</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </cache>
+      <code>
+        <disabled>0</disabled>
+        <editor>PureText</editor>
+        <name>code</name>
+        <number>3</number>
+        <prettyName>Code</prettyName>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <contentType>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>contentType</name>
+        <number>1</number>
+        <prettyName>Content Type</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>CSS|LESS</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </contentType>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>2</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>5</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>4</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
+    </class>
+    <property>
+      <cache>long</cache>
+    </property>
+    <property>
+      <code>.xwiki-limits, .xwiki-limits .progress {
+  margin: 0;
+}
+
+.xwiki-limits .progress p {
+  font-size: 1.2em;
+}</code>
+    </property>
+    <property>
+      <contentType>CSS</contentType>
+    </property>
+    <property>
+      <name>CSS for the limits</name>
+    </property>
+    <property>
+      <parse>0</parse>
+    </property>
+    <property>
+      <use>currentPage</use>
     </property>
   </object>
   <object>
@@ -205,14 +340,83 @@
       </scope>
     </class>
     <property>
-      <content>{{velocity}}
-## In case that the user access the CreateWiki page, even if we have removed the link in the drawer, we display an error message in the top of the page.
-#if ($doc.fullName ==  'WikiManager.CreateWiki' &amp;&amp; $services.limits.wikiLimit &lt;= $services.wiki.allIds.size())
-{{error}}
-$services.localization.render('limits.wikis.createwiki', [$services.limits.wikiLimit])
-{{/error}}
+      <content>{{velocity output="false"}}
+#**
+ * Display message when on the CreateWiki page
+ *#
+#macro(displayWikisLimit)
+  #set ($wikiCount = $services.wiki.allIds.size())
+  #set ($wikiLimit = $services.limits.wikiLimit)
+  #displayProgressBar($wikiCount, $wikiLimit, 'limits.wikis.displayer')
+  #if ($wikiCount &gt;= $wikiLimit)
+    ## Javascript that disable the 'create wiki' form
+    #set ($discard = $xwiki.jsx.use('XWiki.Limits.LimitsUIX'))
+  #end
 #end
-{{/velocity}}</content>
+#**
+ * Display a message when the number of wikis has been reached
+ *#
+#macro(displayWikisLimitReached)
+  {{error}}
+    $services.localization.render('limits.wikis.createwiki', [$wikiLimit])
+  {{/error}}
+#end
+#*
+ * Display the limit for the number of users
+ *#
+#macro(displayUsersLimit)
+  #set ($userCount = $services.limits.userCount)
+  #set ($userLimit = $services.limits.userLimit)
+  #displayProgressBar($userCount, $userLimit, 'limits.user.displayer')
+  #if ($userCount &gt;= $userLimit)
+    ## Javascript that disable the 'add user' button
+    #set ($discard = $xwiki.jsx.use('XWiki.Limits.LimitsUIX'))
+  #end
+#end
+#**
+ * Display a progress bar
+ *#
+#macro(displayProgressBar $count $limit $translationKey)
+  #set ($discard = $xwiki.ssx.use('XWiki.Limits.LimitsUIX'))
+  #set ($count = $mathtool.toDouble($count))
+  #set ($limit = $mathtool.toDouble($limit))
+  #set ($percent = $count / $limit * 100)
+  #set ($progressBarClass = "progress-bar-success")
+  #if ($percent &gt; 75)
+    #set ($progressBarClass = "progress-bar-warning")
+  #end
+  #if ($percent &gt; 90)
+    #set ($progressBarClass = "progress-bar-danger")
+  #end
+  
+  {{html clean="false"}}
+    &lt;div class="alert alert-info alert-dismissible xwiki-limits" role="alert"&gt;
+      &lt;p&gt;&lt;strong&gt;$escapetool.xml($services.localization.render('limits.displayer.title'))&lt;/strong&gt;&lt;/p&gt;
+      &lt;div class="progress"&gt;
+        &lt;div class="progress-bar $progressBarClass progress-bar-striped" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: ${percent}%"&gt;
+          &lt;p&gt;$escapetool.xml($services.localization.render($translationKey, [$count, $limit]))&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  {{/html}}
+
+#end
+{{/velocity}}
+
+{{velocity}}
+##
+## Controller
+##
+## Of course, some appropriate UI extension would be a lot better than this.
+## However, that's currently the cleanest way to do it without editing some pages (CreateWiki or User Admin).
+##
+#if ($doc.fullName == 'WikiManager.CreateWiki')
+  #displayWikisLimit()
+#elseif ($doc.fullName == 'XWiki.XWikiPreferences' &amp;&amp; "$!request.section" == 'Users')
+  #displayUsersLimit()
+#end
+{{/velocity}}
+</content>
     </property>
     <property>
       <extensionPointId>org.xwiki.platform.template.header.after</extensionPointId>
