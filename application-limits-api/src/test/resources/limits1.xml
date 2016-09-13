@@ -1,0 +1,8 @@
+<limits>
+  <number-of-users>42</number-of-users>
+  <number-of-wikis>12</number-of-wikis>
+  <groups>
+    <limit group="GroupA">21</limit>
+    <limit group="GroupB">72</limit>
+  </groups>
+</limits>

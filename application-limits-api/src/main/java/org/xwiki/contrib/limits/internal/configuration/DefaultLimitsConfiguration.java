@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.contrib.limits.internal;
+package org.xwiki.contrib.limits.internal.configuration;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,8 +50,12 @@ import org.xwiki.contrib.limits.LimitsConfiguration;
 @Singleton
 public class DefaultLimitsConfiguration implements LimitsConfiguration, Initializable
 {
-    // Windows is not supported and we don't care.
-    private Path configFile = Paths.get("/", "etc", "xwiki", "limits.xml");
+    /**
+     * Path of the config file. Windows is not supported and we don't care.
+     * Visibility is protected and not final instead of private to allow the test class, located in the same package,
+     * to overwrite the value.
+     */
+    protected static Path configFile = Paths.get("/", "etc", "xwiki", "limits.xml");
 
     private int numberOfUsers;
 
@@ -65,7 +69,7 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
         try {
             reload();
         } catch (Exception e) {
-            throw new InitializationException("Failed to load the configuration of the XWiki Limits Application.", e);
+            throw new InitializationException("Failed to load the configuration of the Limits Application.", e);
         }
     }
 
@@ -91,7 +95,7 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
         } catch (JDOMException | IOException e) {
             throw new Exception(
                     String.format(
-                            "Failed to parse the configuration file for the XWiki Limits Application [%s].",
+                            "Failed to parse the configuration file for the Limits Application [%s].",
                             configFile),
                     e);
         }
@@ -99,12 +103,8 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
 
     private Element getLimitsElement() throws Exception
     {
-        Element limitsElem = getXMLDocument().getRootElement();
-        if (limitsElem == null) {
-            throw new Exception("Failed to parse the configuration file for the XWiki Limits " +
-                    "Application. The <limits> section is missing.");
-        }
-        return limitsElem;
+        // The result cannot be null, otherwise an exception has already been thrown by getXMLDocument().
+        return getXMLDocument().getRootElement();
     }
 
 
@@ -162,6 +162,5 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
     {
         return Collections.unmodifiableMap(groupLimits);
     }
-
 
 }

@@ -39,6 +39,8 @@ import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 
 /**
+ * Cancel the saving of a user is the number of users is superior to the limit fixed for the XWiki instance.
+ *
  * @version $Id: $
  */
 @Component
@@ -91,6 +93,7 @@ public class UserListener implements EventListener
                     CancelableEvent cancelableEvent = (CancelableEvent) event;
                     cancelableEvent.cancel("The user limit has been reached.");
                 } else {
+                    // Should never happen
                     logger.error("Failed to cancel the event [{}].", event);
                 }
             }

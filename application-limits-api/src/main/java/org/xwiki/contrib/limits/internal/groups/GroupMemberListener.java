@@ -45,6 +45,8 @@ import com.xpn.xwiki.internal.plugin.rightsmanager.ReferenceUserIterator;
 import com.xpn.xwiki.objects.BaseObject;
 
 /**
+ * Cancel the saving of a group is the number of member is superior to the limit fixed for this group.
+ *
  * @version $Id: $
  */
 @Component
@@ -101,7 +103,7 @@ public class GroupMemberListener implements EventListener
                 maybeCancelUpdate(event, documentReference, oldCount, count, limit.intValue());
             }
         } catch (Exception e) {
-            logger.error("Failed to check if the xwiki network group limits are respected.", e);
+            logger.error("Failed to check if the group limits are respected.", e);
         }
     }
 
@@ -120,6 +122,7 @@ public class GroupMemberListener implements EventListener
                         "The limit of number of users in the group [%s] has been reached [%d/%d].",
                         documentReference, count, limit));
             } else {
+                // Should never happen actually
                 logger.error("Failed to cancel the event [{}].", event);
             }
         }
@@ -136,9 +139,10 @@ public class GroupMemberListener implements EventListener
             String member = obj.getStringValue("member");
             if (StringUtils.isNotBlank(member)) {
                 // The member could be... an other group!
-                // It could happen if the user is trying to cheat us.
-                DocumentReference groupReference = explicitDocumentReferenceResolver.resolve(member);
-                ReferenceUserIterator referenceUserIterator = new ReferenceUserIterator(groupReference,
+                // So we need to use the ReferenceUserIterator to have the proper count of users that the document
+                // is holding (being a user or a group).
+                DocumentReference memberReference = explicitDocumentReferenceResolver.resolve(member);
+                ReferenceUserIterator referenceUserIterator = new ReferenceUserIterator(memberReference,
                         explicitDocumentReferenceResolver, executionProvider.get());
                 while (referenceUserIterator.hasNext()) {
                     members.add(referenceUserIterator.next());

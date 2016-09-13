@@ -19,8 +19,10 @@
  */
 package org.xwiki.contrib.limits.internal.groups;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Provider;
@@ -28,7 +30,6 @@ import javax.inject.Provider;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.xwiki.component.util.DefaultParameterizedType;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
@@ -40,6 +41,7 @@ import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
 import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
+import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 
@@ -64,6 +66,33 @@ public class GroupMemberCounterTest
     private DocumentReferenceResolver<String> explicitDocumentReferenceResolver;
     private Provider<Execution> executionProvider;
     private Execution execution;
+    private XWikiContext xcontext;
+    private XWiki xwiki;
+
+    /**
+     * Group to test
+     */
+    private DocumentReference groupReference = new DocumentReference("xwiki", "XWiki", "SomeGroup");
+
+    /**
+     * User
+     */
+    private DocumentReference userA = new DocumentReference("xwiki", "XWiki", "UserA");
+
+    /**
+     * An other user
+     */
+    private DocumentReference userB = new DocumentReference("xwiki", "XWiki", "UserB");
+
+    /**
+     * Limits
+     */
+    private Map<DocumentReference, Number> groupLimits;
+
+    /**
+     * The event sent to the component.
+     */
+    private CancelableEvent event;
 
     @Before
     public void setUp() throws Exception
@@ -76,65 +105,130 @@ public class GroupMemberCounterTest
                 mocker.registerMockComponent(new DefaultParameterizedType(null, Provider.class, Execution.class));
         execution = mock(Execution.class);
         when(executionProvider.get()).thenReturn(execution);
-    }
-
-    @Test
-    public void onEvent() throws Exception
-    {
-        CancelableEvent event = mock(CancelableEvent.class);
-        XWikiDocument doc = mock(XWikiDocument.class);
-
-        DocumentReference documentReference = new DocumentReference("xwiki", "XWiki", "SomeGroup");
-        when(doc.getDocumentReference()).thenReturn(documentReference);
-
-        Map<DocumentReference, Number> groupLimits = new HashMap<>();
-        when(limitsConfiguration.getGroupsLimits()).thenReturn(groupLimits);
-        groupLimits.put(documentReference, 1);
-
-        BaseObject obj1 = mock(BaseObject.class);
-        BaseObject obj2 = mock(BaseObject.class);
-        BaseObject obj3 = mock(BaseObject.class);
-        BaseObject obj4 = mock(BaseObject.class);
-        when(doc.getXObjects(new DocumentReference("xwiki", "XWiki", "XWikiGroups"))).thenReturn(
-                Arrays.asList(obj1, obj2, null, obj3, obj4));
-        when(obj1.getStringValue("member")).thenReturn("XWiki.UserA");
-        when(obj2.getStringValue("member")).thenReturn("XWiki.UserB");
-        when(obj3.getStringValue("member")).thenReturn("XWiki.UserA");
-        when(obj4.getStringValue("member")).thenReturn("");
-
-        DocumentReference userA = new DocumentReference("xwiki", "XWiki", "UserA");
-        DocumentReference userB = new DocumentReference("xwiki", "XWiki", "UserB");
-        when(explicitDocumentReferenceResolver.resolve("XWiki.UserA")).thenReturn(userA);
-        when(explicitDocumentReferenceResolver.resolve("XWiki.UserB")).thenReturn(userB);
 
         ExecutionContext executionContext = mock(ExecutionContext.class);
         when(execution.getContext()).thenReturn(executionContext);
 
-        XWikiContext xcontext = mock(XWikiContext.class);
+        xcontext = mock(XWikiContext.class);
         when(executionContext.getProperty(XWikiContext.EXECUTIONCONTEXT_KEY)).thenReturn(xcontext);
-        XWiki xwiki = mock(XWiki.class);
+        xwiki = mock(XWiki.class);
         when(xcontext.getWiki()).thenReturn(xwiki);
 
-        XWikiDocument userADoc = mock(XWikiDocument.class);
-        XWikiDocument userBDoc = mock(XWikiDocument.class);
-        when(xwiki.getDocument(eq(userA), eq(xcontext))).thenReturn(userADoc);
-        when(xwiki.getDocument(eq(userB), eq(xcontext))).thenReturn(userBDoc);
+        groupLimits = new HashMap<>();
+        when(limitsConfiguration.getGroupsLimits()).thenReturn(groupLimits);
+
+        // Event
+        event = mock(CancelableEvent.class);
+    }
+
+    /**
+     * Create some mocks to fake a group document holding some member objects, that can work with ReferenceUserIterator.
+     *
+     * @param groupReference the reference of the group document to mock
+     * @param users a list of users that the group document is holding (but not saved yet)
+     * @param oldCount the old count of users (before the save action that is occuring)
+     *
+     * @return the mock document to be used by the component
+     *
+     * @throws Exception if something bad happens
+     */
+    private XWikiDocument mockGroup(DocumentReference groupReference, List<DocumentReference> users, long oldCount)
+            throws Exception
+    {
+        // The list of objects that the group document is supposed to hold
+        List<BaseObject> userObjs = new ArrayList<>(users.size());
+        for (DocumentReference user : users) {
+            BaseObject userObj = null;
+            if (user != null) {
+                userObj = mock(BaseObject.class);
+                when(userObj.getStringValue("member")).thenReturn(user.toString());
+                // Also mock the user
+                mockUser(user);
+            }
+            userObjs.add(userObj);
+        }
+
+        // The old count
+        when(groupMemberCounter.getUserCount(groupReference)).thenReturn(Long.valueOf(oldCount));
+
+        // The document to return
+        XWikiDocument doc = mock(XWikiDocument.class);
+        when(doc.getDocumentReference()).thenReturn(groupReference);
+        when(doc.getXObjects(new DocumentReference("xwiki", "XWiki", "XWikiGroups"))).thenReturn(
+                userObjs);
+
+        return doc;
+    }
+
+    /**
+     * Mock a user document holding a XWiki.XWikiUsers object.
+     * @param user the reference of the user
+     * @throws XWikiException if an error occurs
+     */
+    private void mockUser(DocumentReference user) throws XWikiException
+    {
+        when(explicitDocumentReferenceResolver.resolve(user.toString())).thenReturn(user);
+
+        XWikiDocument userDoc = mock(XWikiDocument.class);
+        when(xwiki.getDocument(eq(user), eq(xcontext))).thenReturn(userDoc);
 
         DocumentReference userClassReference = new DocumentReference("xwiki", "XWiki", "XWikiUsers");
-        BaseObject userADocObj = mock(BaseObject.class);
-        when(userADoc.getXObject(eq(userClassReference))).thenReturn(userADocObj);
-        when(userADoc.getDocumentReference()).thenReturn(userA);
-        BaseObject userBDocObj = mock(BaseObject.class);
-        when(userBDoc.getXObject(eq(userClassReference))).thenReturn(userBDocObj);
-        when(userBDoc.getDocumentReference()).thenReturn(userB);
+        BaseObject userDocObj = mock(BaseObject.class);
+        when(userDoc.getXObject(eq(userClassReference))).thenReturn(userDocObj);
+        when(userDoc.getDocumentReference()).thenReturn(user);
+    }
 
-        when(groupMemberCounter.getUserCount(documentReference)).thenReturn(Long.valueOf(1));
+    @Test
+    public void onEvent_WhenLimitIsReached() throws Exception
+    {
+        // Limits
+        groupLimits.put(groupReference, 1);
 
-        mocker.getComponentUnderTest().onEvent(event, doc, null);
+        // Content of the group
+        XWikiDocument groupDoc = mockGroup(groupReference, Arrays.asList(userA, null, userB), 1);
 
-        verify(mocker.getMockedLogger(), never()).error(anyString(), Matchers.anyObject());
+        // Run the test
+        mocker.getComponentUnderTest().onEvent(event, groupDoc, null);
+
+        // Verify
         verify(event).cancel(
                 "The limit of number of users in the group [xwiki:XWiki.SomeGroup] has been reached [2/1].");
+    }
+
+    @Test
+    public void onEvent_WhenLimitIsNotReached() throws Exception
+    {
+        // Limits
+        groupLimits.put(groupReference, 3);
+
+        // Content of the group
+        XWikiDocument groupDoc = mockGroup(groupReference, Arrays.asList(userA, userB), 1);
+
+        // Run the test
+        mocker.getComponentUnderTest().onEvent(event, groupDoc, null);
+
+        // Verify
+        verify(event, never()).cancel(anyString());
+    }
+
+    /**
+     * In this test, the limit is reached, but the number of members inside the group decreases, which is already a
+     * progress. This feature is needed to allow the administrator to use the UI to remove some members one by one.
+     */
+    @Test
+    public void onEvent_WhenLimitIsReachedButNumberOfMemberDecreases() throws Exception
+    {
+        // Limits
+        groupLimits.put(groupReference, 1);
+
+        // Content of the group
+        XWikiDocument groupDoc = mockGroup(groupReference, Arrays.asList(userA, userB), 3);
+
+        // Run the test
+        mocker.getComponentUnderTest().onEvent(event, groupDoc, null);
+
+        // Verify
+        verify(event, never()).cancel(anyString());
     }
 
 }

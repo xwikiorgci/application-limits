@@ -1,8 +1,8 @@
+org.xwiki.contrib.limits.internal.configuration.DefaultLimitsConfiguration
 org.xwiki.contrib.limits.internal.groups.GroupMemberCounter
 org.xwiki.contrib.limits.internal.groups.GroupMemberListener
 org.xwiki.contrib.limits.internal.users.UserCounter
 org.xwiki.contrib.limits.internal.users.UserListener
 org.xwiki.contrib.limits.internal.wikis.WikisLimitStep
-org.xwiki.contrib.limits.internal.DefaultLimitsConfiguration
 org.xwiki.contrib.limits.rest.LimitsResource
 org.xwiki.contrib.limits.script.LimitsScriptServices
