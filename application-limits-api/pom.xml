@@ -11,6 +11,8 @@
   <properties>
     <!-- Test coverage -->
     <xwiki.jacoco.instructionRatio>0.51</xwiki.jacoco.instructionRatio>
+    <!-- This application must be installed the root namespace -->
+    <xwiki.extension.namespaces>root</xwiki.extension.namespaces>
   </properties>
   <dependencies>
     <dependency>

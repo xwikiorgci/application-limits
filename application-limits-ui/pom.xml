@@ -12,6 +12,8 @@
   <properties>
     <!-- Name to display by the Extension Manager -->
     <xwiki.extension.name>Limits Application</xwiki.extension.name>
+    <!-- This application must be installed on every wiki -->
+    <xwiki.extension.namespaces>root</xwiki.extension.namespaces>
   </properties>
   <dependencies>
     <dependency>
