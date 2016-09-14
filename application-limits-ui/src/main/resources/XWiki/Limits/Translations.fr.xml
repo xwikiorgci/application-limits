@@ -43,8 +43,10 @@
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
   <content>## XWiki Translation for language fr generated from http://www.l10n.xwiki.org
+limits.displayer.title=Limites\:
 limits.user.displayer=Nombre d''utilisateurs autorisés {0} / {1}
-limits.user.reachedLimit=Vous avez atteint la limite du nombre d'utilisateurs.
+limits.user.reachedLimit=La limite du nombre d'utilisateurs a été atteinte.
 limits.wikis.createwiki=Vous n''êtes pas autorisé à créer un nouveau wiki car vous avez atteint la limite de [{0}] wikis créés.
+limits.wikis.displayer=Nombre de wikis autorisés {0} / {1}
 </content>
 </xwikidoc>
