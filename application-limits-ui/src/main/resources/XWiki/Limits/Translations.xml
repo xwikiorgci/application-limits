@@ -43,7 +43,7 @@
 limits.wikis.displayer=Wikis limit: {0} / {1}
 limits.user.displayer=Users limit: {0} / {1}
 limits.user.reachedLimit=You have reached the limit of users.
-limits.displayer.title=Limit:</content>
+limits.displayer.title=Limits:</content>
   <object>
     <name>XWiki.Limits.Translations</name>
     <number>0</number>

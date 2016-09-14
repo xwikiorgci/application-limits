@@ -253,6 +253,9 @@
 
 .xwiki-limits .progress p {
   font-size: 1.2em;
+  padding: 0 0.3em;
+  position: absolute;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
 }</code>
     </property>
     <property>
