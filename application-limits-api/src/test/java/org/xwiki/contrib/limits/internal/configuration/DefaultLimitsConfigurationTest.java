@@ -45,7 +45,7 @@ public class DefaultLimitsConfigurationTest
     @Test
     public void test() throws Exception
     {
-        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limits1.xml").getFile());
+        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limits1.xml").toURI());
         LimitsConfiguration config = mocker.getComponentUnderTest();
 
         assertEquals(42, config.getTotalNumberOfUsersLimit());
@@ -56,7 +56,7 @@ public class DefaultLimitsConfigurationTest
         assertEquals(21, limits.get(new DocumentReference("xwiki", "XWiki", "GroupA")));
         assertEquals(72, limits.get(new DocumentReference("xwiki", "XWiki", "GroupB")));
 
-        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limits2.xml").getFile());
+        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limits2.xml").toURI());
         config.reload();
 
         assertEquals(202, config.getTotalNumberOfUsersLimit());
@@ -71,7 +71,7 @@ public class DefaultLimitsConfigurationTest
     @Test
     public void testWhenConfigIsEmpty() throws Exception
     {
-        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limitsError1.xml").getFile());
+        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limitsError1.xml").toURI());
 
         InitializationException caught = null;
         try {
@@ -93,7 +93,7 @@ public class DefaultLimitsConfigurationTest
     @Test
     public void testWhenFieldIsMissing() throws Exception
     {
-        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limitsError2.xml").getFile());
+        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limitsError2.xml").toURI());
 
         InitializationException caught = null;
         try {
