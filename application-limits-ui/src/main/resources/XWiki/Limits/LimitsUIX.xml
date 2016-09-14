@@ -135,6 +135,12 @@
       $('#xwikicontent &gt; *').remove();
       $('#xwikicontent').append($("&lt;div class=\"box errormessage\"&gt;$escapetool.javascript($escapetool.xml($services.localization.render('limits.wikis.createwiki', [$services.limits.wikiLimit])))&lt;/div&gt;"));
     }
+    
+    // Disable the registration form
+    if (xm.document == 'XWiki.XWikiRegister') {
+      $('#mainContentArea &gt; *').remove();
+      $('#mainContentArea').append($("&lt;div class=\"box errormessage\"&gt;$escapetool.javascript($escapetool.xml($services.localization.render('limits.user.reachedLimit')))&lt;/div&gt;"));
+    }
   });
 
 });
@@ -404,6 +410,17 @@
   {{/html}}
 
 #end
+#**
+ * Disable the registration if the limit has been reached
+ *#
+#macro(maybeDisableRegistration)
+  #set ($userCount = $services.limits.userCount)
+  #set ($userLimit = $services.limits.userLimit)
+  #if ($userCount &gt;= $userLimit)
+    ## Javascript that disable the register
+    #set ($discard = $xwiki.jsx.use('XWiki.Limits.LimitsUIX'))
+  #end
+#end
 {{/velocity}}
 
 {{velocity}}
@@ -413,10 +430,13 @@
 ## Of course, some appropriate UI extension would be a lot better than this.
 ## However, that's currently the cleanest way to do it without editing some pages (CreateWiki or User Admin).
 ##
-#if ($doc.fullName == 'WikiManager.CreateWiki')
+#set ($docFullName = $doc.fullName)
+#if ($docFullName == 'WikiManager.CreateWiki')
   #displayWikisLimit()
-#elseif ($doc.fullName == 'XWiki.XWikiPreferences' &amp;&amp; "$!request.section" == 'Users')
+#elseif ($docFullName == 'XWiki.XWikiPreferences' &amp;&amp; "$!request.section" == 'Users')
   #displayUsersLimit()
+#elseif ($docFullName == 'XWiki.XWikiRegister')
+  #maybeDisableRegistration()
 #end
 {{/velocity}}
 </content>

@@ -42,7 +42,7 @@
   <content>limits.wikis.createwiki=You are not allowed to create a new wiki. You have reached the limit [{0}].
 limits.wikis.displayer=Wikis limit: {0} / {1}
 limits.user.displayer=Users limit: {0} / {1}
-limits.user.reachedLimit=You have reached the limit of users.
+limits.user.reachedLimit=The limit of users has been reached.
 limits.displayer.title=Limits:</content>
   <object>
     <name>XWiki.Limits.Translations</name>
