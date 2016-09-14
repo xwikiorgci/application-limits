@@ -36,7 +36,6 @@ import org.xwiki.observation.event.CancelableEvent;
 import org.xwiki.observation.event.Event;
 
 import com.xpn.xwiki.doc.XWikiDocument;
-import com.xpn.xwiki.objects.BaseObject;
 
 /**
  * Cancel the saving of a user is the number of users is superior to the limit fixed for the XWiki instance.
@@ -78,8 +77,8 @@ public class UserListener implements EventListener
     {
         XWikiDocument document = (XWikiDocument) source;
 
-        List<BaseObject> userObjects = document.getXObjects(USER_CLASS);
-        if (userObjects == null || userObjects.isEmpty()) {
+        // If there is no user object on the page, do nothing
+        if (document.getXObject(USER_CLASS) == null) {
             return;
         }
 
