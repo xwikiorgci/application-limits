@@ -17,7 +17,6 @@
   </properties>
   <modules>
     <module>application-limits-api</module>
-    <module>application-limits-ui</module>
   </modules>
   <developers>
     <developer>

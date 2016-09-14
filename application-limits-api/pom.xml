@@ -10,9 +10,11 @@
   <name>Limits - API</name>
   <properties>
     <!-- Test coverage -->
-    <xwiki.jacoco.instructionRatio>0.51</xwiki.jacoco.instructionRatio>
+    <xwiki.jacoco.instructionRatio>0.46</xwiki.jacoco.instructionRatio>
     <!-- This application must be installed the root namespace -->
     <xwiki.extension.namespaces>root</xwiki.extension.namespaces>
+    <!-- This API replaces the old UI -->
+    <xwiki.extension.features>org.xwiki.contrib:application-limits-ui</xwiki.extension.features>
   </properties>
   <dependencies>
     <dependency>
@@ -40,6 +42,11 @@
       <artifactId>xwiki-platform-rest-server</artifactId>
       <version>${platform.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-uiextension-api</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
     <!-- Test dependencies -->
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -53,4 +60,22 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+    <resources>
+      <!-- Webjar resources go to a special directory according to the webjar specifications -->
+      <resource>
+        <directory>src/main/resources/webjar</directory>
+        <targetPath>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${project.version}</targetPath>
+        <filtering>false</filtering>
+      </resource>
+      <!-- All other resources are packaged as they are -->
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>webjar/**</exclude>
+        </excludes>
+      </resource>
+    </resources>
+  </build>
 </project>

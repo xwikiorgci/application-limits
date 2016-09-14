@@ -1,0 +1,88 @@
+#**
+ * Display message when on the CreateWiki page
+ *#
+#macro(displayWikisLimit)
+    #set ($wikiCount = $services.wiki.allIds.size())
+    #set ($wikiLimit = $services.limits.wikiLimit)
+    #displayProgressBar($wikiCount, $wikiLimit, 'limits.wikis.displayer')
+    #if ($wikiCount >= $wikiLimit)
+        ## Javascript that disable the 'create wiki' form
+        #addJavascript()
+    #end
+#end
+#**
+ * Display a message when the number of wikis has been reached
+ *#
+#macro(displayWikisLimitReached)
+<div class="alert alert-info alert-dismissible xwiki-limits" role="alert">
+    $escapetool.xml($services.localization.render('limits.wikis.createwiki', [$wikiLimit]))
+</div>
+#end
+#*
+ * Display the limit for the number of users
+ *#
+#macro(displayUsersLimit)
+    #set ($userCount = $services.limits.userCount)
+    #set ($userLimit = $services.limits.userLimit)
+    #displayProgressBar($userCount, $userLimit, 'limits.user.displayer')
+    #if ($userCount >= $userLimit)
+        ## Javascript that disable the 'add user' button
+        #addJavascript()
+    #end
+#end
+#**
+ * Display a progress bar
+ *#
+#macro(displayProgressBar $count $limit $translationKey)
+    #set ($discard = $xwiki.linkx.use("$services.webjars.url('application-limits-api/${project.version}/css/limits.css')?evaluate=true", {'rel': 'stylesheet'}))
+    #set ($count = $mathtool.toDouble($count))
+    #set ($limit = $mathtool.toDouble($limit))
+    #set ($percent = $count / $limit * 100)
+    #set ($progressBarClass = "progress-bar-success")
+    #if ($percent > 75)
+        #set ($progressBarClass = "progress-bar-warning")
+    #end
+    #if ($percent > 90)
+        #set ($progressBarClass = "progress-bar-danger")
+    #end
+    <div class="alert alert-info xwiki-limits" role="alert">
+        <p><strong>$escapetool.xml($services.localization.render('limits.displayer.title'))</strong></p>
+        <div class="progress">
+            <div class="progress-bar $progressBarClass progress-bar-striped" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: ${percent}%">
+                <p>$escapetool.xml($services.localization.render($translationKey, [$count, $limit]))</p>
+            </div>
+        </div>
+    </div>
+#end
+#**
+ * Disable the registration if the limit has been reached
+ *#
+#macro(maybeDisableRegistration)
+    #set ($userCount = $services.limits.userCount)
+    #set ($userLimit = $services.limits.userLimit)
+    #if ($userCount >= $userLimit)
+        ## Javascript that disable the registration
+        #addJavascript()
+    #end
+#end
+#**
+ * Adds the javascript
+ *#
+#macro(addJavascript)
+    ## This is needed because Skin Extensions do not support webjars...
+    <script language="javascript" src="$escapetool.xml("$services.webjars.url('application-limits-api/${project.version}/js/limits.js')&evaluate=true")"></script>
+#end
+##
+## Controller
+##
+## Of course, some appropriate UI extension would be a lot better than this.
+## However, that's currently the cleanest way to do it without editing some pages (CreateWiki or User Admin).
+##
+#set ($docFullName = $doc.fullName)
+#if ($docFullName == 'WikiManager.CreateWiki')
+    #displayWikisLimit()
+#elseif ($docFullName == 'XWiki.XWikiPreferences' && "$!request.section" == 'Users')
+    #displayUsersLimit()
+#elseif ($docFullName == 'XWiki.XWikiRegister')
+    #maybeDisableRegistration()
+#end
