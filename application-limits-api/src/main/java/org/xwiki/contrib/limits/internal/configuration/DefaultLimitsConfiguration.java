@@ -20,6 +20,7 @@
 package org.xwiki.contrib.limits.internal.configuration;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -35,9 +36,10 @@ import org.jdom.input.SAXBuilder;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
-import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.text.StringUtils;
+
+import org.xwiki.contrib.limits.LimitsConfiguration;
 
 /**
  * Default implementation of {@link LimitsConfiguration}.
@@ -74,10 +76,9 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
     @Override
     public void reload() throws Exception
     {
-        /*
         if (!Files.isReadable(configFile)) {
             throw new Exception(String.format("File [%s] is not readable.", configFile));
-        }*/
+        }
 
         Element limitsElem = getLimitsElement();
 
