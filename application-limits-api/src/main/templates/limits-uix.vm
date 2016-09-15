@@ -34,7 +34,8 @@
  * Display a progress bar
  *#
 #macro(displayProgressBar $count $limit $translationKey)
-    #set ($discard = $xwiki.linkx.use($services.webjars.url('org.xwiki.contrib:application-limits-api', 'css/limits.css', {'evaluate': true}), {'rel': 'stylesheet'}))
+    #computeMinExtension()
+    #set ($discard = $xwiki.linkx.use($services.webjars.url('org.xwiki.contrib:application-limits-api', "css/limits${minExtension}.css", {'evaluate': true}), {'rel': 'stylesheet'}))
     #set ($count = $mathtool.toDouble($count))
     #set ($limit = $mathtool.toDouble($limit))
     #set ($percent = $count / $limit * 100)
@@ -69,8 +70,18 @@
  * Adds the javascript
  *#
 #macro(addJavascript)
+    #computeMinExtension()
     ## This is needed because Skin Extensions do not support webjars...
-    <script language="javascript" src="$escapetool.xml($services.webjars.url('org.xwiki.contrib:application-limits-api', 'js/limits.js', {'evaluate': true}))"></script>
+    <script language="javascript" src="$escapetool.xml($services.webjars.url('org.xwiki.contrib:application-limits-api', "js/limits${minExtension}.js", {'evaluate': true}))"></script>
+#end
+#**
+ * Compute the extension that should be used when the resources are minified
+ *#
+#macro(computeMinExtension)
+    #set ($minExtension = '.min')
+    #if ("$!request.minify" == 'false')
+        #set ($minExtension = '')
+    #end
 #end
 ##
 ## Controller
