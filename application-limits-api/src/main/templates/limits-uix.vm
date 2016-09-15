@@ -34,7 +34,7 @@
  * Display a progress bar
  *#
 #macro(displayProgressBar $count $limit $translationKey)
-    #set ($discard = $xwiki.linkx.use("$services.webjars.url('application-limits-api/${project.version}/css/limits.css')?evaluate=true", {'rel': 'stylesheet'}))
+    #set ($discard = $xwiki.linkx.use($services.webjars.url('org.xwiki.contrib:application-limits-api', 'css/limits.css', {'evaluate': true}), {'rel': 'stylesheet'}))
     #set ($count = $mathtool.toDouble($count))
     #set ($limit = $mathtool.toDouble($limit))
     #set ($percent = $count / $limit * 100)
@@ -70,7 +70,7 @@
  *#
 #macro(addJavascript)
     ## This is needed because Skin Extensions do not support webjars...
-    <script language="javascript" src="$escapetool.xml("$services.webjars.url('application-limits-api/${project.version}/js/limits.js')&evaluate=true")"></script>
+    <script language="javascript" src="$escapetool.xml($services.webjars.url('org.xwiki.contrib:application-limits-api', 'js/limits.js', {'evaluate': true}))"></script>
 #end
 ##
 ## Controller

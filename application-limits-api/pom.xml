@@ -15,6 +15,10 @@
     <xwiki.extension.namespaces>root</xwiki.extension.namespaces>
     <!-- This API replaces the old UI -->
     <xwiki.extension.features>org.xwiki.contrib:application-limits-ui</xwiki.extension.features>
+    <!-- Used for the generation of the wabjar resources -->
+    <webjar.contentDirectory>src/main/resources/webjar</webjar.contentDirectory>
+    <webjar.targetDirectory>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${project.version}</webjar.targetDirectory>
+    <xwiki.minification.skip>false</xwiki.minification.skip>
   </properties>
   <dependencies>
     <dependency>
@@ -64,18 +68,50 @@
     <resources>
       <!-- Webjar resources go to a special directory according to the webjar specifications -->
       <resource>
-        <directory>src/main/resources/webjar</directory>
-        <targetPath>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${project.version}</targetPath>
-        <filtering>false</filtering>
+        <directory>${basedir}/src/main/js</directory>
+        <targetPath>${webjar.targetDirectory}/js</targetPath>
       </resource>
-      <!-- All other resources are packaged as they are -->
       <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <excludes>
-          <exclude>webjar/**</exclude>
-        </excludes>
+        <directory>${basedir}/src/main/css</directory>
+        <targetPath>${webjar.targetDirectory}/css</targetPath>
+      </resource>
+      <!-- Templates go to the templates directory -->
+      <resource>
+        <directory>${basedir}/src/main/templates</directory>
+        <targetPath>${project.build.outputDirectory}/templates</targetPath>
+      </resource>
+      <!-- Don't forget the usual resources -->
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>yuicompressor-maven-plugin</artifactId>
+        <version>1.5.1</version>
+        <executions>
+          <execution>
+            <id>minify-js-and-css</id>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <sourceDirectory>${webjar.targetDirectory}</sourceDirectory>
+              <outputDirectory>${webjar.targetDirectory}</outputDirectory>
+              <skip>${xwiki.minification.skip}</skip>
+              <suffix>.min</suffix>
+              <jswarn>false</jswarn>
+              <includes>
+                <!-- Without these filters, we end up with buggy files -->
+                <include>**/js/**</include>
+                <include>**/css/**</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
