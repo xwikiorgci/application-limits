@@ -8,7 +8,7 @@
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>application-limits</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <name>Limits - Parent POM</name>
   <packaging>pom</packaging>
   <description>Enforce some limits on an XWiki instance: number of users, number of wikis, etc...</description>
@@ -29,7 +29,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/application-limits.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/application-limits.git</developerConnection>
     <url>https://github.com/xwiki-contrib/application-limits/tree/master</url>
-    <tag>HEAD</tag>
+    <tag>application-limits-1.1</tag>
   </scm>
   <issueManagement>
     <system>jira</system>
