@@ -9,12 +9,14 @@
   <artifactId>application-limits-api</artifactId>
   <name>Limits - API</name>
   <properties>
-    <!-- Test coverage -->
-    <xwiki.jacoco.instructionRatio>0.46</xwiki.jacoco.instructionRatio>
+    <!-- Name to display by the Extension Manager -->
+    <xwiki.extension.name>Limits Application</xwiki.extension.name>
     <!-- This application must be installed the root namespace -->
     <xwiki.extension.namespaces>root</xwiki.extension.namespaces>
     <!-- This API replaces the old UI -->
     <xwiki.extension.features>org.xwiki.contrib:application-limits-ui</xwiki.extension.features>
+    <!-- Test coverage -->
+    <xwiki.jacoco.instructionRatio>0.46</xwiki.jacoco.instructionRatio>
     <!-- Used for the generation of the wabjar resources -->
     <webjar.contentDirectory>src/main/resources/webjar</webjar.contentDirectory>
     <webjar.targetDirectory>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${project.version}</webjar.targetDirectory>
