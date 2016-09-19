@@ -22,7 +22,10 @@ package org.xwiki.contrib.limits.internal.configuration;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +64,8 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
 
     private HashMap<DocumentReference, Number> groupLimits = new HashMap<>();
 
+    private HashMap<String, Object> customLimits = new HashMap<>();
+
     @Override
     public void initialize() throws InitializationException
     {
@@ -80,6 +85,8 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
         numberOfWikis = parseIntFromElement(limitsElem, "number-of-wikis");
 
         parseGroupLimits(limitsElem);
+
+        parseCustomLimits(limitsElem);
     }
 
     private Document getXMLDocument() throws Exception
@@ -139,6 +146,47 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
         }
     }
 
+    private void parseCustomLimits(Element limitsElem) throws Exception
+    {
+        customLimits.clear();
+
+        Element customElem = limitsElem.getChild("custom");
+        if (customElem != null) {
+            for (Object child : customElem.getChildren("limit")) {
+                if (child instanceof Element) {
+                    Element childElem = (Element) child;
+                    String limitName = StringUtils.trim(childElem.getAttributeValue("name"));
+                    String limitType = childElem.getAttributeValue("type");
+                    String value = childElem.getTextTrim();
+                    if (StringUtils.isNotBlank(limitName)) {
+                        if ("long".equals(limitType)) {
+                            try {
+                                Long limitValue = Long.parseLong(value);
+                                customLimits.put(limitName, limitValue);
+                            } catch (NumberFormatException e) {
+                                throw new Exception(String.format(
+                                        "[%s] is not a valid number for the limit [%s].", value, limitName), e);
+                            }
+                        } else if ("date".equals(limitType)) {
+                            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            try {
+                                Date date = parser.parse(value);
+                                customLimits.put(limitName, date);
+                            } catch (ParseException e) {
+                                throw new Exception(String.format(
+                                        "[%s] is a not a valid date for the limit [%s]. Supported format is "
+                                                + "yyyy-MM-dd HH:mm.", value, limitName), e);
+                            }
+                        } else {
+                            throw new Exception(
+                                    String.format("Missing attribute \"type\" for the limit [%s].", limitName));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public int getTotalNumberOfUsersLimit()
     {
@@ -157,4 +205,9 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
         return Collections.unmodifiableMap(groupLimits);
     }
 
+    @Override
+    public Map<String, Object> getCustomLimits()
+    {
+        return Collections.unmodifiableMap(customLimits);
+    }
 }

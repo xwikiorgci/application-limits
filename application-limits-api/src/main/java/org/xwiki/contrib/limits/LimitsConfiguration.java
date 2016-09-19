@@ -55,4 +55,11 @@ public interface LimitsConfiguration
      * to contain
      */
     Map<DocumentReference, Number> getGroupsLimits();
+
+    /**
+     * @return an unmodifiable map of custom limits (that could a number or a date) that the developer is responsible
+     * to implement
+     * @since 1.2
+     */
+    Map<String, Object> getCustomLimits();
 }

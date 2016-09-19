@@ -65,6 +65,14 @@ public class LimitsScriptServices implements ScriptService
         return limitsConfiguration.getGroupsLimits();
     }
 
+    /**
+     * @since 1.2
+     */
+    public Map<String, Object> getCustomLimits() throws Exception
+    {
+        return limitsConfiguration.getCustomLimits();
+    }
+
     public void reloadConfiguration() throws Exception
     {
         limitsConfiguration.reload();

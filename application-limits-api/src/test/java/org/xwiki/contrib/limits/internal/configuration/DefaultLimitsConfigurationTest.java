@@ -20,6 +20,7 @@
 package org.xwiki.contrib.limits.internal.configuration;
 
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Map;
 
 import org.junit.Rule;
@@ -56,16 +57,25 @@ public class DefaultLimitsConfigurationTest
         assertEquals(21, limits.get(new DocumentReference("xwiki", "XWiki", "GroupA")));
         assertEquals(72, limits.get(new DocumentReference("xwiki", "XWiki", "GroupB")));
 
+        Map<String, Object> customLimits = config.getCustomLimits();
+        assertEquals(2, customLimits.size());
+        assertEquals(new Date(1474296600000l), customLimits.get("time"));
+        assertEquals(Long.valueOf(36), customLimits.get("number-of-applications"));
+
         DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limits2.xml").toURI());
         config.reload();
 
         assertEquals(202, config.getTotalNumberOfUsersLimit());
         assertEquals(89, config.getWikisNumberLimit());
+        customLimits = config.getCustomLimits();
+        assertEquals(0, customLimits.size());
 
         limits = config.getGroupsLimits();
         assertEquals(2, limits.size());
         assertEquals(722, limits.get(new DocumentReference("xwiki", "XWiki", "GroupA")));
         assertEquals(4, limits.get(new DocumentReference("xwiki", "XWiki", "GroupC")));
+        customLimits = config.getCustomLimits();
+        assertEquals(0, customLimits.size());
     }
 
     @Test
@@ -107,6 +117,66 @@ public class DefaultLimitsConfigurationTest
         assertNotNull(caught);
         assertEquals("Failed to load the configuration of the Limits Application.", caught.getMessage());
         assertEquals("[null] is not a valid number for the limit of [number-of-users].", caught.getCause().getMessage());
+    }
+
+    @Test
+    public void testWhenCustomLimitIsUnparsableDate() throws Exception
+    {
+        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limitsError3.xml").toURI());
+
+        InitializationException caught = null;
+        try {
+            mocker.getComponentUnderTest();
+        } catch (ComponentLookupException e) {
+            if (e.getCause() instanceof InitializationException) {
+                caught = (InitializationException) e.getCause();
+            }
+        }
+
+        assertNotNull(caught);
+        assertEquals("Failed to load the configuration of the Limits Application.", caught.getMessage());
+        assertEquals("[hello] is a not a valid date for the limit [time]. Supported format is yyyy-MM-dd HH:mm.",
+                caught.getCause().getMessage());
+    }
+
+    @Test
+    public void testWhenCustomLimitIsUnparsableLong() throws Exception
+    {
+        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limitsError4.xml").toURI());
+
+        InitializationException caught = null;
+        try {
+            mocker.getComponentUnderTest();
+        } catch (ComponentLookupException e) {
+            if (e.getCause() instanceof InitializationException) {
+                caught = (InitializationException) e.getCause();
+            }
+        }
+
+        assertNotNull(caught);
+        assertEquals("Failed to load the configuration of the Limits Application.", caught.getMessage());
+        assertEquals("[hello] is not a valid number for the limit [whatever].",
+                caught.getCause().getMessage());
+    }
+
+    @Test
+    public void testWhenCustomLimitHasNoType() throws Exception
+    {
+        DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limitsError5.xml").toURI());
+
+        InitializationException caught = null;
+        try {
+            mocker.getComponentUnderTest();
+        } catch (ComponentLookupException e) {
+            if (e.getCause() instanceof InitializationException) {
+                caught = (InitializationException) e.getCause();
+            }
+        }
+
+        assertNotNull(caught);
+        assertEquals("Failed to load the configuration of the Limits Application.", caught.getMessage());
+        assertEquals("Missing attribute \"type\" for the limit [whatever].",
+                caught.getCause().getMessage());
     }
 
 }
