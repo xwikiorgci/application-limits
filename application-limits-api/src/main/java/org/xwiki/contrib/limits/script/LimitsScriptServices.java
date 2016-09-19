@@ -32,6 +32,8 @@ import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.script.service.ScriptService;
 
 /**
+ * Script services to get the current limits and some information to handle them.
+ *
  * @version $Id: $
  */
 @Component
@@ -45,27 +47,43 @@ public class LimitsScriptServices implements ScriptService
     @Inject
     private UserCounter userCounter;
 
+    /**
+     * @return the maximum number of users that the XWiki instance is allowed to handle
+     */
     public int getUserLimit() throws Exception
     {
         return limitsConfiguration.getTotalNumberOfUsersLimit();
     }
 
+    /**
+     * @return the maximum number of wikis that the XWiki instance is allowed to handle
+     */
     public int getWikiLimit() throws Exception
     {
         return limitsConfiguration.getWikisNumberLimit();
     }
 
+    /**
+     * @return the total number of users in the wiki (this operation is costly)
+     * @throws Exception if somethign bad happen
+     */
     public int getUserCount() throws Exception
     {
         return userCounter.getUserCount();
     }
 
+    /**
+     * @return an unmodifiable map of group references associated to the number of users that groups are allowed
+     * to contain
+     */
     public Map<DocumentReference, Number> getGroupLimits() throws Exception
     {
         return limitsConfiguration.getGroupsLimits();
     }
 
     /**
+     * @return an unmodifiable map of custom limits (that could a number or a date) that the developer is responsible
+     * to implement
      * @since 1.2
      */
     public Map<String, Object> getCustomLimits() throws Exception
@@ -73,6 +91,10 @@ public class LimitsScriptServices implements ScriptService
         return limitsConfiguration.getCustomLimits();
     }
 
+    /**
+     * Reload the configuration.
+     * @throws Exception if something bad happens
+     */
     public void reloadConfiguration() throws Exception
     {
         limitsConfiguration.reload();
