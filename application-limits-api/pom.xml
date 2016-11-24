@@ -12,7 +12,7 @@
     <!-- Name to display by the Extension Manager -->
     <xwiki.extension.name>Limits Application</xwiki.extension.name>
     <!-- This application must be installed the root namespace -->
-    <xwiki.extension.namespaces>root</xwiki.extension.namespaces>
+    <xwiki.extension.namespaces>{root}</xwiki.extension.namespaces>
     <!-- This API replaces the old UI -->
     <xwiki.extension.features>org.xwiki.contrib:application-limits-ui</xwiki.extension.features>
     <!-- Test coverage -->
