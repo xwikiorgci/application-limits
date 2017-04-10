@@ -4,7 +4,7 @@
 #macro(displayWikisLimit)
     #set ($wikiCount = $services.wiki.allIds.size())
     #set ($wikiLimit = $services.limits.wikiLimit)
-    #displayProgressBar($wikiCount, $wikiLimit, 'limits.wikis.displayer')
+    #displayLimitProgressBar($wikiCount, $wikiLimit, 'limits.wikis.displayer')
     #if ($wikiCount >= $wikiLimit)
         ## Javascript that disable the 'create wiki' form
         #addJavascript()
@@ -24,7 +24,7 @@
 #macro(displayUsersLimit)
     #set ($userCount = $services.limits.userCount)
     #set ($userLimit = $services.limits.userLimit)
-    #displayProgressBar($userCount, $userLimit, 'limits.user.displayer')
+    #displayLimitProgressBar($userCount, $userLimit, 'limits.user.displayer')
     #if ($userCount >= $userLimit)
         ## Javascript that disable the 'add user' button
         #addJavascript()
@@ -33,7 +33,7 @@
 #**
  * Display a progress bar
  *#
-#macro(displayProgressBar $count $limit $translationKey)
+#macro(displayLimitProgressBar $count $limit $translationKey)
     #computeMinExtension()
     #set ($discard = $xwiki.linkx.use($services.webjars.url('org.xwiki.contrib:application-limits-api', "css/limits${minExtension}.css", {'evaluate': true}), {'rel': 'stylesheet'}))
     #set ($count = $mathtool.toDouble($count))
