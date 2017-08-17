@@ -36,6 +36,7 @@ import org.xwiki.context.ExecutionContext;
 import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.DocumentReferenceResolver;
+import org.xwiki.model.reference.LocalDocumentReference;
 import org.xwiki.observation.event.CancelableEvent;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -172,7 +173,7 @@ public class GroupMemberCounterTest
         XWikiDocument userDoc = mock(XWikiDocument.class);
         when(xwiki.getDocument(eq(user), eq(xcontext))).thenReturn(userDoc);
 
-        DocumentReference userClassReference = new DocumentReference("xwiki", "XWiki", "XWikiUsers");
+        LocalDocumentReference userClassReference = new LocalDocumentReference("XWiki", "XWikiUsers");
         BaseObject userDocObj = mock(BaseObject.class);
         when(userDoc.getXObject(eq(userClassReference))).thenReturn(userDocObj);
         when(userDoc.getDocumentReference()).thenReturn(user);

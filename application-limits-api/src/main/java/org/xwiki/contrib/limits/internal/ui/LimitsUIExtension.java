@@ -19,32 +19,17 @@
  */
 package org.xwiki.contrib.limits.internal.ui;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.apache.commons.io.IOUtils;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.component.phase.Initializable;
-import org.xwiki.component.phase.InitializationException;
-import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.rendering.block.Block;
-import org.xwiki.rendering.block.RawBlock;
-import org.xwiki.rendering.syntax.Syntax;
-import org.xwiki.template.Template;
 import org.xwiki.template.TemplateManager;
 import org.xwiki.uiextension.UIExtension;
-
-import com.xpn.xwiki.XWiki;
-import com.xpn.xwiki.XWikiContext;
-import com.xpn.xwiki.internal.template.SUExecutor;
-import com.xpn.xwiki.user.api.XWikiRightService;
 
 /**
  * @version $Id: $
@@ -52,33 +37,12 @@ import com.xpn.xwiki.user.api.XWikiRightService;
 @Component
 @Singleton
 @Named("LimitsUIExtension")
-public class LimitsUIExtension implements UIExtension, Initializable
+public class LimitsUIExtension implements UIExtension
 {
-    @Inject
-    private Provider<XWikiContext> contextProvider;
-
     @Inject
     private TemplateManager templateManager;
 
-    @Inject
-    private SUExecutor suExecutor;
-
     private static final String TEMPLATE_NAME = "limits-uix.vm";
-
-    private static final DocumentReference SUPERADMIN_REFERENCE =
-            new DocumentReference("xwiki", XWiki.SYSTEM_SPACE, XWikiRightService.SUPERADMIN_USER);
-
-    private String defaultTemplate;
-
-    @Override
-    public void initialize() throws InitializationException
-    {
-        try {
-            defaultTemplate = IOUtils.toString(getClass().getResourceAsStream("/templates/limits-uix.vm"));
-        } catch (IOException e) {
-            throw new InitializationException("Failed to initialize the Limits UI Extension.", e);
-        }
-    }
 
     @Override
     public String getId()
@@ -101,29 +65,6 @@ public class LimitsUIExtension implements UIExtension, Initializable
     @Override
     public Block execute()
     {
-        Template template = templateManager.getTemplate(TEMPLATE_NAME);
-        if (template != null) {
-            return templateManager.executeNoException(TEMPLATE_NAME);
-        }
-
-        return new RawBlock(executeDefaultTemplate(), Syntax.HTML_5_0);
-    }
-
-    private String executeDefaultTemplate()
-    {
-        try {
-            return suExecutor.call(new Callable<String>()
-            {
-                @Override
-                public String call() throws Exception
-                {
-                    return contextProvider.get().getWiki().evaluateVelocity(defaultTemplate, "limits");
-                }
-            }, SUPERADMIN_REFERENCE);
-
-        } catch (Exception e) {
-            // Cannot happen
-            return "";
-        }
+        return templateManager.executeNoException(TEMPLATE_NAME);
     }
 }
