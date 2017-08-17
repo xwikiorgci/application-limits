@@ -177,6 +177,8 @@ public class DefaultLimitsConfiguration implements LimitsConfiguration, Initiali
                                         "[%s] is a not a valid date for the limit [%s]. Supported format is "
                                                 + "yyyy-MM-dd HH:mm.", value, limitName), e);
                             }
+                        } else if ("string".equals(limitType)) {
+                            customLimits.put(limitName, value);
                         } else {
                             throw new Exception(
                                     String.format("Missing attribute \"type\" for the limit [%s].", limitName));

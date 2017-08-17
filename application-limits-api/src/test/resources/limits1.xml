@@ -8,5 +8,6 @@
   <custom>
     <limit name="time" type="date">2016-09-19 16:50</limit>
     <limit name="number-of-applications" type="long">36</limit>
+    <limit name="custom-string" type="string">Some string limit (do whatever you want with it)</limit>
   </custom>
 </limits>

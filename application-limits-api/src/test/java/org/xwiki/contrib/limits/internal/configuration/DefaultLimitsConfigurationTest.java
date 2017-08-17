@@ -58,9 +58,10 @@ public class DefaultLimitsConfigurationTest
         assertEquals(72, limits.get(new DocumentReference("xwiki", "XWiki", "GroupB")));
 
         Map<String, Object> customLimits = config.getCustomLimits();
-        assertEquals(2, customLimits.size());
+        assertEquals(3, customLimits.size());
         assertEquals(new Date(1474296600000l), customLimits.get("time"));
         assertEquals(Long.valueOf(36), customLimits.get("number-of-applications"));
+        assertEquals("Some string limit (do whatever you want with it)", customLimits.get("custom-string"));
 
         DefaultLimitsConfiguration.configFile = Paths.get(getClass().getResource("/limits2.xml").toURI());
         config.reload();
