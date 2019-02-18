@@ -65,7 +65,7 @@ public class UserCounter
     private int getUserCountOnWiki(String wikiId) throws QueryException
     {
         Query query = queryManager.createQuery("SELECT COUNT(DISTINCT doc.fullName) FROM Document doc," +
-                " doc.object(XWiki.XWikiUsers) AS obj",
+                " doc.object(XWiki.XWikiUsers) AS obj WHERE obj.active = 1",
                 Query.XWQL).setWiki(wikiId);
         List<Long> results = query.execute();
         return results.get(0).intValue();
