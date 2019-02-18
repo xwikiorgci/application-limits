@@ -64,7 +64,7 @@ public class GroupMemberCounterTest
 
     private GroupMemberCounter groupMemberCounter;
     private LimitsConfiguration limitsConfiguration;
-    private DocumentReferenceResolver<String> explicitDocumentReferenceResolver;
+    private DocumentReferenceResolver<String> documentReferenceResolver;
     private Provider<Execution> executionProvider;
     private Execution execution;
     private XWikiContext xcontext;
@@ -100,8 +100,8 @@ public class GroupMemberCounterTest
     {
         groupMemberCounter = mocker.getInstance(GroupMemberCounter.class);
         limitsConfiguration = mocker.getInstance(LimitsConfiguration.class);
-        explicitDocumentReferenceResolver = mock(DocumentReferenceResolver.class);
-        mocker.registerComponent(DocumentReferenceResolver.TYPE_STRING, "explicit", explicitDocumentReferenceResolver);
+        documentReferenceResolver = mock(DocumentReferenceResolver.class);
+        mocker.registerComponent(DocumentReferenceResolver.TYPE_STRING, "current", documentReferenceResolver);
         executionProvider =
                 mocker.registerMockComponent(new DefaultParameterizedType(null, Provider.class, Execution.class));
         execution = mock(Execution.class);
@@ -168,7 +168,7 @@ public class GroupMemberCounterTest
      */
     private void mockUser(DocumentReference user) throws XWikiException
     {
-        when(explicitDocumentReferenceResolver.resolve(user.toString())).thenReturn(user);
+        when(documentReferenceResolver.resolve(user.toString())).thenReturn(user);
 
         XWikiDocument userDoc = mock(XWikiDocument.class);
         when(xwiki.getDocument(eq(user), eq(xcontext))).thenReturn(userDoc);

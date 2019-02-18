@@ -66,8 +66,8 @@ public class GroupMemberListener implements EventListener
     private LimitsConfiguration limitsConfiguration;
 
     @Inject
-    @Named("explicit")
-    private DocumentReferenceResolver<String> explicitDocumentReferenceResolver;
+    @Named("current")
+    private DocumentReferenceResolver<String> documentReferenceResolver;
 
     @Inject
     private Logger logger;
@@ -141,9 +141,9 @@ public class GroupMemberListener implements EventListener
                 // The member could be... an other group!
                 // So we need to use the ReferenceUserIterator to have the proper count of users that the document
                 // is holding (being a user or a group).
-                DocumentReference memberReference = explicitDocumentReferenceResolver.resolve(member);
+                DocumentReference memberReference = documentReferenceResolver.resolve(member);
                 ReferenceUserIterator referenceUserIterator = new ReferenceUserIterator(memberReference,
-                        explicitDocumentReferenceResolver, executionProvider.get());
+                        documentReferenceResolver, executionProvider.get());
                 while (referenceUserIterator.hasNext()) {
                     members.add(referenceUserIterator.next());
                 }
