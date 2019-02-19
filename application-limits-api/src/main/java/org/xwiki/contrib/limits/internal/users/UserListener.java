@@ -26,8 +26,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.xpn.xwiki.objects.BaseObject;
 import org.slf4j.Logger;
 import org.xwiki.bridge.event.DocumentCreatingEvent;
+import org.xwiki.bridge.event.DocumentUpdatingEvent;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.contrib.limits.LimitsConfiguration;
 import org.xwiki.model.reference.LocalDocumentReference;
@@ -49,6 +51,8 @@ public class UserListener implements EventListener
 {
     private static final LocalDocumentReference USER_CLASS = new LocalDocumentReference("XWiki", "XWikiUsers");
 
+    private static final String ACTIVE = "active";
+
     @Inject
     private UserCounter userCounter;
 
@@ -67,9 +71,7 @@ public class UserListener implements EventListener
     @Override
     public List<Event> getEvents()
     {
-        // Possible strategy to break the contract: add an XWikiUsers on an existing document so the limit is not respected...
-        // But I think it does not deserve a proper handler, it should not happen in practice.
-        return Arrays.<Event>asList(new DocumentCreatingEvent());
+        return Arrays.asList(new DocumentCreatingEvent(), new DocumentUpdatingEvent());
     }
 
     @Override
@@ -79,6 +81,12 @@ public class UserListener implements EventListener
 
         // If there is no user object on the page, do nothing
         if (document.getXObject(USER_CLASS) == null) {
+            return;
+        }
+
+        // If the event is not about activating a user (either by creating a new user or by changing the
+        // "active" field of an existing user), we don't care (it is allowed to save some changes on existing users).
+        if (!isActivatingUser(document)) {
             return;
         }
 
@@ -99,5 +107,28 @@ public class UserListener implements EventListener
         } catch (Exception e) {
             logger.error("Failed to limit the number of users", e);
         }
+    }
+
+    private boolean isActivatingUser(XWikiDocument document)
+    {
+        return isUserActive(document) && !isOldDocumentActive(document);
+    }
+
+    private boolean isUserActive(XWikiDocument document)
+    {
+        BaseObject object = document.getXObject(USER_CLASS);
+        return object.getIntValue(ACTIVE, 1) == 1;
+    }
+
+    private boolean isOldDocumentActive(XWikiDocument document)
+    {
+        XWikiDocument originalDoc = document.getOriginalDocument();
+        if (originalDoc == null) {
+            // If there is no original document, it means we are creating a new document, so the user did not exist
+            // before so it was not "active".
+            return false;
+        }
+        BaseObject originalObj = originalDoc.getXObject(USER_CLASS);
+        return originalObj.getIntValue(ACTIVE, 1) == 1;
     }
 }
