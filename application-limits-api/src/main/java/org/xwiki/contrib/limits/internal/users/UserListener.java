@@ -128,12 +128,6 @@ public class UserListener implements EventListener
             return false;
         }
         BaseObject originalObj = originalDoc.getXObject(USER_CLASS);
-        // It seems that even if the document is new, there is an original document object. So we also need to be sure
-        // there is an user object too.
-        if (originalObj == null) {
-            // No object = no user
-            return false;
-        }
-        return originalObj.getIntValue(ACTIVE, 1) == 1;
+        return originalObj != null && originalObj.getIntValue(ACTIVE, 1) == 1;
     }
 }
