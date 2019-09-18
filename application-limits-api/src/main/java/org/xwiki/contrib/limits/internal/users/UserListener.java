@@ -124,8 +124,7 @@ public class UserListener implements EventListener
     {
         XWikiDocument originalDoc = document.getOriginalDocument();
         if (originalDoc == null) {
-            // If there is no original document, it means we are creating a new document, so the user did not exist
-            // before so it was not "active".
+            // Should never happen
             return false;
         }
         BaseObject originalObj = originalDoc.getXObject(USER_CLASS);
