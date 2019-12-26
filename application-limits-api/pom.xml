@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>application-limits</artifactId>
-    <version>2.1.2</version>
+    <version>2.2-SNAPSHOT</version>
   </parent>
   <artifactId>application-limits-api</artifactId>
   <name>Limits - API</name>
